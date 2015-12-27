@@ -38,7 +38,7 @@ class GeoCode
     public function __construct()
     {
         //  Load the driver
-        // @todo: build a settings interface for etting and configuring the driver.
+        // @todo: build a settings interface for setting and configuring the driver.
         $sSlug    = defined('APP_GEO_CODE_DRIVER') ? strtolower(APP_GEO_CODE_DRIVER) : self::DEFAULT_DRIVER;
         $aDrivers = _NAILS_GET_DRIVERS('nailsapp/module-geo-code');
         $oDriver  = null;
