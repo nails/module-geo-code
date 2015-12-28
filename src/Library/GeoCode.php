@@ -13,6 +13,7 @@
 
 namespace Nails\GeoCode\Library;
 
+use Nails\Factory;
 use Nails\GeoCode\Exception\GeoCodeException;
 use Nails\GeoCode\Exception\GeoCodeDriverException;
 
@@ -27,6 +28,16 @@ class GeoCode
 
     // --------------------------------------------------------------------------
 
+    /**
+     * The name of the table to store cached results
+     */
+    const DB_CACHE_TABLE = NAILS_DB_PREFIX . 'geocode_cache';
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * The default driver to use if none is specified
+     */
     const DEFAULT_DRIVER = 'nailsapp/driver-geo-code-google';
 
     // --------------------------------------------------------------------------
@@ -74,28 +85,58 @@ class GeoCode
     /**
      * Return all information about a given address
      * @param string $sAddress The address to get details for
-     * @return \stdClass
+     * @return null|\Nails\GeoCode\Result\LatLng
      */
     public function lookup($sAddress = '')
     {
         $sAddress = trim($sAddress);
-        $oCache   = $this->getCache($sAddress);
+
+        if (empty($sAddress)){
+            return null;
+        }
+
+        //  Check caches; local cache first followed by DB cache
+        $oCache = $this->getCache($sAddress);
 
         if (!empty($oCache)) {
             return $oCache;
         }
 
-        $oAddress = $this->oDriver->lookup($sAddress);
+        $oDb = Factory::service('Database');
+        $oDb->select('X(latlng) lat, Y(latlng) lng');
+        $oDb->where('address', $sAddress);
+        $oDb->limit(1);
+        $oResult = $oDb->get(self::DB_CACHE_TABLE)->row();
 
-        if (!($oAddress instanceof \Nails\GeoCode\Result\LatLng)) {
+        if (!empty($oResult)) {
 
-            throw new GeoCodeException(
-                'Geo Code Driver did not return a \Nails\GeoCode\Result\LatLng result',
-                3
-            );
+            $oLatLng = Factory::factory('LatLng', 'nailsapp/module-geo-code');
+            $oLatLng->setAddress($sAddress);
+            $oLatLng->setLat($oResult->lat);
+            $oLatLng->setLng($oResult->lng);
+
+        } else {
+
+            $oLatLng = $this->oDriver->lookup($sAddress);
+
+            if (!($oLatLng instanceof \Nails\GeoCode\Result\LatLng)) {
+
+                throw new GeoCodeException(
+                    'Geo Code Driver did not return a \Nails\GeoCode\Result\LatLng result',
+                    3
+                );
+            }
+
+            //  Save to the DB Cache
+            $oDb->set('address', $sAddress);
+            $oDb->set('latlng', 'POINT(' . $oLatLng->getLat() . ', ' . $oLatLng->getLng() . ')', false);
+            $oDb->set('created', 'NOW()', false);
+            $oDb->insert(self::DB_CACHE_TABLE);
         }
 
-        $this->setCache($sAddress, $oAddress);
+        dumpanddie($oLatLng);
+
+        $this->setCache($sAddress, $oLatLng);
 
         return $oAddress;
     }
