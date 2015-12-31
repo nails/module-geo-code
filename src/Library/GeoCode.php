@@ -134,11 +134,9 @@ class GeoCode
             $oDb->insert(self::DB_CACHE_TABLE);
         }
 
-        dumpanddie($oLatLng);
-
         $this->setCache($sAddress, $oLatLng);
 
-        return $oAddress;
+        return $oLatLng;
     }
 
     // --------------------------------------------------------------------------
