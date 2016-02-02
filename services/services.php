@@ -10,6 +10,15 @@ return array(
             }
         }
     ),
+    'models' => array(
+        'Driver' => function () {
+            if (class_exists('\App\GeoCode\Model\Driver')) {
+                return new \App\GeoCode\Model\Driver();
+            } else {
+                return new \Nails\GeoCode\Model\Driver();
+            }
+        },
+    ),
     'factories' => array(
         'LatLng' => function () {
             if (class_exists('\App\GeoCode\Result\LatLng')) {
