@@ -127,11 +127,17 @@ class GeoCode
                 );
             }
 
+            $sLat = $oLatLng->getLat();
+            $sLng = $oLatLng->getLng();
+
             //  Save to the DB Cache
-            $oDb->set('address', $sAddress);
-            $oDb->set('latlng', 'POINT(' . $oLatLng->getLat() . ', ' . $oLatLng->getLng() . ')', false);
-            $oDb->set('created', 'NOW()', false);
-            $oDb->insert(self::DB_CACHE_TABLE);
+            if (!empty($sLat) && !empty($sLng)) {
+
+                $oDb->set('address', $sAddress);
+                $oDb->set('latlng', 'POINT(' . $sLat . ', ' . $sLng . ')', false);
+                $oDb->set('created', 'NOW()', false);
+                $oDb->insert(self::DB_CACHE_TABLE);
+            }
         }
 
         $this->setCache($sAddress, $oLatLng);
