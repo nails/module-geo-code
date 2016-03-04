@@ -57,61 +57,41 @@ class Settings extends Base
      */
     public function index()
     {
+        if (!userHasPermission('admin:geocode:settings:*')) {
+            unauthorised();
+        }
+
+        $oDb              = Factory::service('Database');
+        $oAppSettingModel = Factory::model('AppSetting');
+        $oDriverModel     = Factory::model('Driver', 'nailsapp/module-geo-code');
+
         //  Process POST
         if ($this->input->post()) {
 
-            $aSettings = array(
-
-                //  General Settings
-                'saved_cards_enabled'     => (bool) $this->input->post('saved_cards_enabled'),
-                'saved_addresses_enabled' => (bool) $this->input->post('saved_addresses_enabled'),
-
-                //  Payment Drivers
-                'enabled_payment_drivers' => $this->input->post('enabled_payment_drivers') ?: array(),
-            );
-
-            $aSettingsEncrypted = array(
-            );
-
-            // --------------------------------------------------------------------------
+            //  Settings keys
+            $sKeyDriver = $oDriverModel->getSettingKey();
 
             //  Validation
             $oFormValidation = Factory::service('FormValidation');
 
-            $oFormValidation->set_rules('enabled_payment_drivers', '', '');
+            $oFormValidation->set_rules($sKeyDriver, '', '');
 
             if ($oFormValidation->run()) {
 
-                $oDb = Factory::service('Database');
+                try {
 
-                $oDb->trans_begin();
+                    $oDb->trans_begin();
 
-                $bRollback        = false;
-                $oAppSettingModel = Factory::model('AppSetting');
-
-                //  Normal settings
-                if (!$oAppSettingModel->set($aSettings, 'nailsapp/module-invoice')) {
-
-                    $sError    = $oAppSettingModel->lastError();
-                    $bRollback = true;
-                }
-
-                //  Encrypted settings
-                if (!$oAppSettingModel->set($aSettingsEncrypted, 'nailsapp/module-invoice', null, true)) {
-
-                    $sError    = $oAppSettingModel->lastError();
-                    $bRollback = true;
-                }
-
-                if (empty($bRollback)) {
+                    //  Drivers
+                    $oDriverModel->saveEnabled($this->input->post($sKeyDriver));
 
                     $oDb->trans_commit();
-                    $this->data['success'] = 'Invoice &amp; Payment settings were saved.';
+                    $this->data['success'] = 'GeoCode settings were saved.';
 
-                } else {
+                } catch (\Exception $e) {
 
                     $oDb->trans_rollback();
-                    $this->data['error'] = 'There was a problem saving settings. ' . $sError;
+                    $this->data['error'] = 'There was a problem saving settings. ' . $e->getMessage();
                 }
 
             } else {
@@ -123,12 +103,9 @@ class Settings extends Base
         // --------------------------------------------------------------------------
 
         //  Get data
-        $this->data['settings'] = appSetting(null, 'nailsapp/module-invoice', true);
-
-        //  Payment drivers
-        $oDriverModel                  = Factory::model('Driver', 'nailsapp/module-geo-code');
+        $this->data['settings']        = appSetting(null, 'nailsapp/module-geo-code', true);
         $this->data['drivers']         = $oDriverModel->getAll();
-        $this->data['drivers_enabled'] = $oDriverModel->getEnabledSlugs();
+        $this->data['drivers_enabled'] = $oDriverModel->getEnabledSlug();
 
         Helper::loadView('index');
     }

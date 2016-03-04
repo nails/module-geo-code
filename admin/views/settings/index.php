@@ -38,10 +38,8 @@ $oInput = nailsFactory('service', 'Input');
                 </p>
                 <?=adminHelper(
                     'loadSettingsDriverTable',
-                    'enabled_driver',
-                    $drivers,
-                    $drivers_enabled,
-                    false
+                    'Driver',
+                    'nailsapp/module-geo-code'
                 )?>
             </div>
             <?php
