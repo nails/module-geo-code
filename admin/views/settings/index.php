@@ -1,15 +1,15 @@
 <?php
 
 //  Get any additional libraries we'll need
-$oInput = nailsFactory('service', 'Input');
+$oInput = \Nails\Factory::service('Input');
 
 ?>
 <div class="group-invoice settings">
     <?php
 
-        echo form_open();
-        $sActiveTab = $this->input->post('active_tab') ?: 'tab-drivers';
-        echo '<input type="hidden" name="active_tab" value="' . $sActiveTab . '" id="active-tab">';
+    echo form_open();
+    $sActiveTab = $this->input->post('active_tab') ?: 'tab-drivers';
+    echo '<input type="hidden" name="active_tab" value="' . $sActiveTab . '" id="active-tab">';
 
     ?>
     <ul class="tabs" data-active-tab-input="#active-tab">
@@ -45,7 +45,7 @@ $oInput = nailsFactory('service', 'Input');
             <?php
         }
 
-    ?>
+        ?>
     </section>
     <p>
         <?=form_submit('submit', lang('action_save_changes'), 'class="btn btn-primary"')?>
