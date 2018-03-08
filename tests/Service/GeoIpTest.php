@@ -1,6 +1,6 @@
 <?php
 
-namespace Nails\GeoCode\Library;
+namespace Nails\GeoCode\Service;
 
 class GeoCodeTest extends \PHPUnit_Framework_TestCase
 {

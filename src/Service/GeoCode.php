@@ -11,7 +11,7 @@
  * @todo        Update this library to be a little more comprehensive, like the CDN library
  */
 
-namespace Nails\GeoCode\Library;
+namespace Nails\GeoCode\Service;
 
 use Nails\Factory;
 use Nails\GeoCode\Exception\GeoCodeException;
