@@ -24,7 +24,7 @@ class Settings extends Base
      */
     public static function announce()
     {
-        $oNavGroup = Factory::factory('Nav', 'nailsapp/module-admin');
+        $oNavGroup = Factory::factory('Nav', 'nails/module-admin');
         $oNavGroup->setLabel('Settings');
         $oNavGroup->setIcon('fa-wrench');
 
@@ -63,7 +63,7 @@ class Settings extends Base
 
         $oDb              = Factory::service('Database');
         $oAppSettingModel = Factory::model('AppSetting');
-        $oDriverModel     = Factory::model('Driver', 'nailsapp/module-geo-code');
+        $oDriverModel     = Factory::model('Driver', 'nails/module-geo-code');
 
         //  Process POST
         if ($this->input->post()) {
@@ -103,7 +103,7 @@ class Settings extends Base
         // --------------------------------------------------------------------------
 
         //  Get data
-        $this->data['settings']        = appSetting(null, 'nailsapp/module-geo-code', true);
+        $this->data['settings']        = appSetting(null, 'nails/module-geo-code', true);
         $this->data['drivers']         = $oDriverModel->getAll();
         $this->data['drivers_enabled'] = $oDriverModel->getEnabledSlug();
 

@@ -39,7 +39,7 @@ $oInput = \Nails\Factory::service('Input');
                 <?=adminHelper(
                     'loadSettingsDriverTable',
                     'Driver',
-                    'nailsapp/module-geo-code'
+                    'nails/module-geo-code'
                 )?>
             </div>
             <?php

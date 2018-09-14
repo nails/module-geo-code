@@ -37,7 +37,7 @@ class GeoCode
     /**
      * The default driver to use if none is specified
      */
-    const DEFAULT_DRIVER = 'nailsapp/driver-geo-code-google';
+    const DEFAULT_DRIVER = 'nails/driver-geo-code-google';
 
     // --------------------------------------------------------------------------
 
@@ -50,7 +50,7 @@ class GeoCode
         //  Load the driver
         // @todo: build a settings interface for setting and configuring the driver.
         $sSlug    = defined('APP_GEO_CODE_DRIVER') ? strtolower(APP_GEO_CODE_DRIVER) : self::DEFAULT_DRIVER;
-        $aDrivers = _NAILS_GET_DRIVERS('nailsapp/module-geo-code');
+        $aDrivers = _NAILS_GET_DRIVERS('nails/module-geo-code');
         $oDriver  = null;
 
         for ($i=0; $i < count($aDrivers); $i++) {
@@ -109,7 +109,7 @@ class GeoCode
 
         if (!empty($oResult)) {
 
-            $oLatLng = Factory::factory('LatLng', 'nailsapp/module-geo-code');
+            $oLatLng = Factory::factory('LatLng', 'nails/module-geo-code');
             $oLatLng->setAddress($sAddress);
             $oLatLng->setLat($oResult->lat);
             $oLatLng->setLng($oResult->lng);

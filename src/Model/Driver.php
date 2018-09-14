@@ -16,6 +16,6 @@ use Nails\Common\Model\BaseDriver;
 
 class Driver extends BaseDriver
 {
-    protected $sModule         = 'nailsapp/module-geo-code';
+    protected $sModule         = 'nails/module-geo-code';
     protected $bEnableMultiple = false;
 }

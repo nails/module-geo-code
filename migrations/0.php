@@ -12,7 +12,7 @@
  * @link
  */
 
-namespace Nails\Database\Migration\Nailsapp\ModuleGeoCode;
+namespace Nails\Database\Migration\Nails\ModuleGeoCode;
 
 use Nails\Common\Console\Migrate\Base;
 

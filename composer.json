@@ -1,5 +1,5 @@
 {
-    "name": "nailsapp/module-geo-code",
+    "name": "nails/module-geo-code",
     "keywords": ["Nails", "Shed Collective", "CodeIgniter", "GEO-Code Module"],
     "homepage": "http://nailsapp.co.uk/modules/geo-code",
     "description": "This is the \"GeoCode\" module for Nails.",
@@ -21,8 +21,8 @@
     "prefer-stable": true,
     "require":
     {
-        "nailsapp/common": "dev-develop",
-        "nailsapp/driver-geo-code-google": "dev-develop"
+        "nails/common": "dev-develop",
+        "nails/driver-geo-code-google": "dev-develop"
     },
     "require-dev":
     {
