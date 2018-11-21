@@ -13,6 +13,7 @@
 
 namespace Nails\GeoCode\Service;
 
+use Nails\Components;
 use Nails\Factory;
 use Nails\GeoCode\Exception\GeoCodeException;
 use Nails\GeoCode\Exception\GeoCodeDriverException;
@@ -50,7 +51,7 @@ class GeoCode
         //  Load the driver
         // @todo: build a settings interface for setting and configuring the driver.
         $sSlug    = defined('APP_GEO_CODE_DRIVER') ? strtolower(APP_GEO_CODE_DRIVER) : self::DEFAULT_DRIVER;
-        $aDrivers = _NAILS_GET_DRIVERS('nails/module-geo-code');
+        $aDrivers = Components::drivers('nails/module-geo-code');
         $oDriver  = null;
 
         for ($i=0; $i < count($aDrivers); $i++) {
@@ -76,7 +77,7 @@ class GeoCode
             );
         }
 
-        $this->oDriver = _NAILS_GET_DRIVER_INSTANCE($oDriver);
+        $this->oDriver = Components::getDriverInstance($oDriver);
     }
 
     // --------------------------------------------------------------------------
