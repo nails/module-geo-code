@@ -21,8 +21,7 @@
     "prefer-stable": true,
     "require":
     {
-        "nails/common": "dev-develop",
-        "nails/driver-geo-code-google": "dev-develop"
+        "nails/common": "dev-develop"
     },
     "require-dev":
     {
