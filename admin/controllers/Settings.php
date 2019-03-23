@@ -61,15 +61,14 @@ class Settings extends Base
             unauthorised();
         }
 
-        $oDb              = Factory::service('Database');
-        $oAppSettingModel = Factory::model('AppSetting');
-        $oDriverModel     = Factory::model('Driver', 'nails/module-geo-code');
+        $oDb            = Factory::service('Database');
+        $oDriverService = Factory::service('Driver', 'nails/module-geo-code');
 
         //  Process POST
         if ($this->input->post()) {
 
             //  Settings keys
-            $sKeyDriver = $oDriverModel->getSettingKey();
+            $sKeyDriver = $oDriverService->getSettingKey();
 
             //  Validation
             $oFormValidation = Factory::service('FormValidation');
@@ -83,7 +82,7 @@ class Settings extends Base
                     $oDb->trans_begin();
 
                     //  Drivers
-                    $oDriverModel->saveEnabled($this->input->post($sKeyDriver));
+                    $oDriverService->saveEnabled($this->input->post($sKeyDriver));
 
                     $oDb->trans_commit();
                     $this->data['success'] = 'GeoCode settings were saved.';
@@ -104,8 +103,8 @@ class Settings extends Base
 
         //  Get data
         $this->data['settings']        = appSetting(null, 'nails/module-geo-code', true);
-        $this->data['drivers']         = $oDriverModel->getAll();
-        $this->data['drivers_enabled'] = $oDriverModel->getEnabledSlug();
+        $this->data['drivers']         = $oDriverService->getAll();
+        $this->data['drivers_enabled'] = $oDriverService->getEnabledSlug();
 
         Helper::loadView('index');
     }

@@ -1,16 +1,16 @@
 <?php
 
 /**
- * This model manages the GeoCoding drivers
+ * This service manages the GeoCoding drivers
  *
  * @package     Nails
  * @subpackage  module-geo-code
- * @category    Model
+ * @category    Service
  * @author      Nails Dev Team
  * @link
  */
 
-namespace Nails\GeoCode\Model;
+namespace Nails\GeoCode\Service;
 
 use Nails\Common\Model\BaseDriver;
 
