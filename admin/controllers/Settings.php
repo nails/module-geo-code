@@ -65,7 +65,8 @@ class Settings extends Base
         $oDriverService = Factory::service('Driver', 'nails/module-geo-code');
 
         //  Process POST
-        if ($this->input->post()) {
+        $oInput = Factory::service('Input');
+        if ($oInput->post()) {
 
             //  Settings keys
             $sKeyDriver = $oDriverService->getSettingKey();
@@ -82,7 +83,7 @@ class Settings extends Base
                     $oDb->trans_begin();
 
                     //  Drivers
-                    $oDriverService->saveEnabled($this->input->post($sKeyDriver));
+                    $oDriverService->saveEnabled($oInput->post($sKeyDriver));
 
                     $oDb->trans_commit();
                     $this->data['success'] = 'GeoCode settings were saved.';
