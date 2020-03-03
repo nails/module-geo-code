@@ -103,7 +103,7 @@ class Settings extends Base
         // --------------------------------------------------------------------------
 
         //  Get data
-        $this->data['settings']        = appSetting(null, 'nails/module-geo-code', true);
+        $this->data['settings']        = appSetting(null, 'nails/module-geo-code', null, true);
         $this->data['drivers']         = $oDriverService->getAll();
         $this->data['drivers_enabled'] = $oDriverService->getEnabledSlug();
 
