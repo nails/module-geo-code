@@ -1,5 +1,7 @@
 <?php
 
+use Nails\GeoCode\Constants;
+
 //  Get any additional libraries we'll need
 $oInput = \Nails\Factory::service('Input');
 
@@ -39,7 +41,7 @@ $oInput = \Nails\Factory::service('Input');
                 <?=adminHelper(
                     'loadSettingsDriverTable',
                     'Driver',
-                    'nails/module-geo-code'
+                    Constants::MODULE_SLUG
                 )?>
             </div>
             <?php

@@ -13,9 +13,10 @@
 namespace Nails\GeoCode\Service;
 
 use Nails\Common\Model\BaseDriver;
+use Nails\GeoCode\Constants;
 
 class Driver extends BaseDriver
 {
-    protected $sModule         = 'nails/module-geo-code';
+    protected $sModule         = Constants::MODULE_SLUG;
     protected $bEnableMultiple = false;
 }

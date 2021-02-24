@@ -15,6 +15,7 @@ namespace Nails\Admin\GeoCode;
 use Nails\Factory;
 use Nails\Admin\Helper;
 use Nails\Admin\Controller\Base;
+use Nails\GeoCode\Constants;
 
 class Settings extends Base
 {
@@ -62,7 +63,7 @@ class Settings extends Base
         }
 
         $oDb            = Factory::service('Database');
-        $oDriverService = Factory::service('Driver', 'nails/module-geo-code');
+        $oDriverService = Factory::service('Driver', Constants::MODULE_SLUG);
 
         //  Process POST
         $oInput = Factory::service('Input');
@@ -103,7 +104,7 @@ class Settings extends Base
         // --------------------------------------------------------------------------
 
         //  Get data
-        $this->data['settings']        = appSetting(null, 'nails/module-geo-code', null, true);
+        $this->data['settings']        = appSetting(null, Constants::MODULE_SLUG, null, true);
         $this->data['drivers']         = $oDriverService->getAll();
         $this->data['drivers_enabled'] = $oDriverService->getEnabledSlug();
 
