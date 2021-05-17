@@ -35,6 +35,9 @@
     {
         "psr-4": {"Nails\\GeoCode\\": "src/"}
     },
+    "suggest": {
+        "nails/driver-geocode-google": "Adds support for geocoding using the Google Geocoding API."
+    },
     "extra":
     {
         "nails" :
