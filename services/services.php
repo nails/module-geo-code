@@ -1,28 +1,31 @@
 <?php
 
+use Nails\GeoCode\Result;
+use Nails\GeoCode\Service;
+
 return [
     'services'  => [
-        'Driver'  => function () {
+        'Driver'  => function (): Service\Driver {
             if (class_exists('\App\GeoCode\Service\Driver')) {
                 return new \App\GeoCode\Service\Driver();
             } else {
-                return new \Nails\GeoCode\Service\Driver();
+                return new Service\Driver();
             }
         },
-        'GeoCode' => function () {
+        'GeoCode' => function (): Service\GeoCode {
             if (class_exists('\App\GeoCode\Service\GeoCode')) {
                 return new \App\GeoCode\Service\GeoCode();
             } else {
-                return new \Nails\GeoCode\Service\GeoCode();
+                return new Service\GeoCode();
             }
         },
     ],
     'factories' => [
-        'LatLng' => function () {
+        'LatLng' => function (): Result\LatLng {
             if (class_exists('\App\GeoCode\Result\LatLng')) {
                 return new \App\GeoCode\Result\LatLng();
             } else {
-                return new \Nails\GeoCode\Result\LatLng();
+                return new Result\LatLng();
             }
         },
     ],
