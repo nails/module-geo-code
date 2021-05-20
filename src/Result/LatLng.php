@@ -3,15 +3,19 @@
 /**
  * This class is an LatLng object which should be returned by Drivers
  *
- * @package     Nails
- * @subpackage  module-geo-code
- * @category    Result
- * @author      Nails Dev Team
- * @link
+ * @package    Nails
+ * @subpackage module-geo-code
+ * @category   Result
+ * @author     Nails Dev Team
  */
 
 namespace Nails\GeoCode\Result;
 
+/**
+ * Class LatLng
+ *
+ * @package Nails\GeoCode\Result
+ */
 class LatLng
 {
     private $sAddress;
@@ -22,11 +26,12 @@ class LatLng
 
     /**
      * Define the LatLng object
+     *
      * @param string $sAddress
      * @param string $sLat
      * @param string $sLng
      */
-    public function __construct($sAddress = '', $sLat = '', $sLng = '')
+    public function __construct(string $sAddress = '', string $sLat = '', string $sLng = '')
     {
         $this->sAddress = $sAddress;
         $this->sLat     = $sLat;
@@ -37,10 +42,12 @@ class LatLng
 
     /**
      * Set the address property
+     *
      * @param string $sAddress The address to set
+     *
      * @return $this
      */
-    public function setAddress($sAddress)
+    public function setAddress(string $sAddress): self
     {
         $this->sAddress = $sAddress;
         return $this;
@@ -50,9 +57,10 @@ class LatLng
 
     /**
      * Get the address
+     *
      * @return string
      */
-    public function getAddress()
+    public function getAddress(): string
     {
         return $this->sAddress;
     }
@@ -61,11 +69,13 @@ class LatLng
 
     /**
      * Set the address's Latitude and Longitude
+     *
      * @param string $sLat The address's Latitude
      * @param string $sLng The address's Longitude
+     *
      * @return $this
      */
-    public function setLatLng($sLat, $sLng)
+    public function setLatLng(string $sLat, string $sLng): self
     {
         $this->setLat($sLat);
         $this->setLng($sLng);
@@ -76,10 +86,12 @@ class LatLng
 
     /**
      * Set the Latitude property
+     *
      * @param string $sLat The Latitude to set
+     *
      * @return $this
      */
-    public function setLat($sLat)
+    public function setLat(string $sLat): self
     {
         $this->sLat = $sLat;
         return $this;
@@ -89,9 +101,10 @@ class LatLng
 
     /**
      * Get the latitude
+     *
      * @return string
      */
-    public function getLat()
+    public function getLat(): string
     {
         return $this->sLat;
     }
@@ -100,10 +113,12 @@ class LatLng
 
     /**
      * Set the Longitude property
+     *
      * @param string $sLng The Longitude to set
+     *
      * @return $this
      */
-    public function setLng($sLng)
+    public function setLng(string $sLng): self
     {
         $this->sLng = $sLng;
         return $this;
@@ -113,9 +128,10 @@ class LatLng
 
     /**
      * Get the longitude
+     *
      * @return string
      */
-    public function getLng()
+    public function getLng(): string
     {
         return $this->sLng;
     }
@@ -124,14 +140,14 @@ class LatLng
 
     /**
      * Get the address's coordinates
+     *
      * @return \stdClass
      */
-    public function getLatLng()
+    public function getLatLng(): \stClass
     {
-        $oLatLng = new \stdClass();
-        $oLatLng->lat = $this->sLat;
-        $oLatLng->lng = $this->sLng;
-
-        return $oLatLng;
+        return (object) [
+            'lat' => $this->sLat,
+            'lng' => $this->sLng,
+        ];
     }
 }

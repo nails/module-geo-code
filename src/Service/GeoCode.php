@@ -3,12 +3,10 @@
 /**
  * This class abstracts access to the GeoCode service
  *
- * @package     Nails
- * @subpackage  module-geo-code
- * @category    Library
- * @author      Nails Dev Team
- * @link
- * @todo        Update this library to be a little more comprehensive, like the CDN library
+ * @package    Nails
+ * @subpackage module-geo-code
+ * @category   Service
+ * @author     Nails Dev Team
  */
 
 namespace Nails\GeoCode\Service;
@@ -19,12 +17,18 @@ use Nails\GeoCode\Constants;
 use Nails\GeoCode\Exception\GeoCodeException;
 use Nails\GeoCode\Exception\GeoCodeDriverException;
 
+/**
+ * Class GeoCode
+ *
+ * @package Nails\GeoCode\Service
+ */
 class GeoCode
 {
     use \Nails\Common\Traits\Caching;
 
     // --------------------------------------------------------------------------
 
+    /** @var \Nails\GeoCode\Interfaces\Driver */
     protected $oDriver;
 
     // --------------------------------------------------------------------------
@@ -45,6 +49,7 @@ class GeoCode
 
     /**
      * Construct the Library, test that the driver is valid
+     *
      * @throws GeoCodeException
      */
     public function __construct()
@@ -55,7 +60,7 @@ class GeoCode
         $aDrivers = Components::drivers(Constants::MODULE_SLUG);
         $oDriver  = null;
 
-        for ($i=0; $i < count($aDrivers); $i++) {
+        for ($i = 0; $i < count($aDrivers); $i++) {
             if ($aDrivers[$i]->slug == $sSlug) {
                 $oDriver = $aDrivers[$i];
                 break;
@@ -68,14 +73,12 @@ class GeoCode
 
         $sDriverClass = $oDriver->data->namespace . $oDriver->data->class;
 
-        //  Ensure driver implements the correct interface
-        $sInterfaceName = 'Nails\GeoCode\Interfaces\Driver';
-        if (!in_array($sInterfaceName, class_implements($sDriverClass))) {
-
-            throw new GeoCodeDriverException(
-                '"' . $sDriverClass . '" must implement ' . $sInterfaceName,
-                2
-            );
+        if (!classImplements($sDriverClass, \Nails\GeoCode\Interfaces\Driver::class)) {
+            throw new GeoCodeDriverException(sprintf(
+                '"%s" must implement %s',
+                $sDriverClass,
+                \Nails\GeoCode\Interfaces\Driver::class
+            ));
         }
 
         $this->oDriver = Components::getDriverInstance($oDriver);
@@ -85,14 +88,16 @@ class GeoCode
 
     /**
      * Return all information about a given address
+     *
      * @param string $sAddress The address to get details for
+     *
      * @return null|\Nails\GeoCode\Result\LatLng
      */
-    public function lookup($sAddress = '')
+    public function lookup(string $sAddress = ''): ?\Nails\GeoCode\Result\LatLng
     {
         $sAddress = trim($sAddress);
 
-        if (empty($sAddress)){
+        if (empty($sAddress)) {
             return null;
         }
 
@@ -103,6 +108,7 @@ class GeoCode
             return $oCache;
         }
 
+        /** @var \Nails\Common\Service\Database $oDb */
         $oDb = Factory::service('Database');
         $oDb->select('X(latlng) lat, Y(latlng) lng');
         $oDb->where('address', $sAddress);
@@ -111,21 +117,22 @@ class GeoCode
 
         if (!empty($oResult)) {
 
+            /** @var \Nails\GeoCode\Result\LatLng $oLatLng */
             $oLatLng = Factory::factory('LatLng', Constants::MODULE_SLUG);
-            $oLatLng->setAddress($sAddress);
-            $oLatLng->setLat($oResult->lat);
-            $oLatLng->setLng($oResult->lng);
+            $oLatLng
+                ->setAddress($sAddress)
+                ->setLat($oResult->lat)
+                ->setLng($oResult->lng);
 
         } else {
 
             $oLatLng = $this->oDriver->lookup($sAddress);
 
             if (!($oLatLng instanceof \Nails\GeoCode\Result\LatLng)) {
-
-                throw new GeoCodeException(
-                    'Geo Code Driver did not return a \Nails\GeoCode\Result\LatLng result',
-                    3
-                );
+                throw new GeoCodeException(sprintf(
+                    'Geo Code Driver did not return a %s result',
+                    \Nails\GeoCode\Result\LatLng::class
+                ));
             }
 
             $sLat = $oLatLng->getLat();
@@ -133,7 +140,6 @@ class GeoCode
 
             //  Save to the DB Cache
             if (!empty($sLat) && !empty($sLng)) {
-
                 $oDb->set('address', $sAddress);
                 $oDb->set('latlng', 'POINT(' . $sLat . ', ' . $sLng . ')', false);
                 $oDb->set('created', 'NOW()', false);
@@ -150,10 +156,12 @@ class GeoCode
 
     /**
      * Return the address property of a lookup
+     *
      * @param string $sAddress The address to look up
+     *
      * @return string|null
      */
-    public function address($sAddress)
+    public function address(string $sAddress): ?string
     {
         return $this->lookup($sAddress)->getAddress();
     }
@@ -162,10 +170,12 @@ class GeoCode
 
     /**
      * Return the latLng property of a lookup
+     *
      * @param string $sAddress The address to look up
-     * @return string|null
+     *
+     * @return \stdClass|null
      */
-    public function latLng($sAddress = '')
+    public function latLng(string $sAddress = ''): ?\stdClass
     {
         return $this->lookup($sAddress)->getLatLng();
     }
@@ -174,10 +184,12 @@ class GeoCode
 
     /**
      * Return the lat property of a lookup
+     *
      * @param string $sAddress The address to look up
+     *
      * @return string|null
      */
-    public function lat($sAddress = '')
+    public function lat(string $sAddress = ''): ?string
     {
         return $this->lookup($sAddress)->getLat();
     }
@@ -186,10 +198,12 @@ class GeoCode
 
     /**
      * Return the lng property of a lookup
+     *
      * @param string $sAddress The address to look up
+     *
      * @return string|null
      */
-    public function lng($sAddress = '')
+    public function lng(string $sAddress = ''): ?string
     {
         return $this->lookup($sAddress)->getLng();
     }
