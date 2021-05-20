@@ -70,7 +70,7 @@ class GeoCode
         }
 
         if (empty($oDriver)) {
-            throw new GeoCodeDriverException('"' . $sSlug . '" is not a valid Geo-Code driver', 1);
+            throw new GeoCodeDriverException('"' . $sSlug . '" is not a valid Geo-Code driver');
         }
 
         $sDriverClass = $oDriver->data->namespace . $oDriver->data->class;
