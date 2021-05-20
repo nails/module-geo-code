@@ -18,8 +18,13 @@ namespace Nails\GeoCode\Result;
  */
 class LatLng
 {
+    /** @var string */
     private $sAddress;
+
+    /** @var string */
     private $sLat;
+
+    /** @var string */
     private $sLng;
 
     // --------------------------------------------------------------------------
@@ -143,7 +148,7 @@ class LatLng
      *
      * @return \stdClass
      */
-    public function getLatLng(): \stClass
+    public function getLatLng(): \stdClass
     {
         return (object) [
             'lat' => $this->sLat,

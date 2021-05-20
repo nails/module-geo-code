@@ -50,7 +50,7 @@ class General implements Interfaces\Component\Settings
         $oDriver
             ->setKey($oDriverService->isMultiple()
                 ? $oDriverService->getSettingKey() . '[]'
-                : $oDriverService->getSettingKey()
+                : (string) $oDriverService->getSettingKey()
             )
             ->setType($oDriverService->isMultiple()
                 ? Form::FIELD_DROPDOWN_MULTIPLE

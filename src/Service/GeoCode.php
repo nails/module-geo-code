@@ -14,8 +14,10 @@ namespace Nails\GeoCode\Service;
 use Nails\Components;
 use Nails\Factory;
 use Nails\GeoCode\Constants;
+use Nails\GeoCode\Interfaces;
 use Nails\GeoCode\Exception\GeoCodeException;
 use Nails\GeoCode\Exception\GeoCodeDriverException;
+use Nails\GeoCode\Result\LatLng;
 
 /**
  * Class GeoCode
@@ -28,7 +30,7 @@ class GeoCode
 
     // --------------------------------------------------------------------------
 
-    /** @var \Nails\GeoCode\Interfaces\Driver */
+    /** @var Interfaces\Driver */
     protected $oDriver;
 
     // --------------------------------------------------------------------------
@@ -73,15 +75,17 @@ class GeoCode
 
         $sDriverClass = $oDriver->data->namespace . $oDriver->data->class;
 
-        if (!classImplements($sDriverClass, \Nails\GeoCode\Interfaces\Driver::class)) {
+        if (!classImplements($sDriverClass, Interfaces\Driver::class)) {
             throw new GeoCodeDriverException(sprintf(
                 '"%s" must implement %s',
                 $sDriverClass,
-                \Nails\GeoCode\Interfaces\Driver::class
+                Interfaces\Driver::class
             ));
         }
 
-        $this->oDriver = Components::getDriverInstance($oDriver);
+        /** @var Interfaces\Driver $oInstance */
+        $oInstance = Components::getDriverInstance($oDriver);
+        $this->oDriver = $oInstance;
     }
 
     // --------------------------------------------------------------------------
@@ -91,9 +95,9 @@ class GeoCode
      *
      * @param string $sAddress The address to get details for
      *
-     * @return null|\Nails\GeoCode\Result\LatLng
+     * @return null|LatLng
      */
-    public function lookup(string $sAddress = ''): ?\Nails\GeoCode\Result\LatLng
+    public function lookup(string $sAddress = ''): ?LatLng
     {
         $sAddress = trim($sAddress);
 
@@ -117,7 +121,7 @@ class GeoCode
 
         if (!empty($oResult)) {
 
-            /** @var \Nails\GeoCode\Result\LatLng $oLatLng */
+            /** @var LatLng $oLatLng */
             $oLatLng = Factory::factory('LatLng', Constants::MODULE_SLUG);
             $oLatLng
                 ->setAddress($sAddress)
@@ -128,10 +132,10 @@ class GeoCode
 
             $oLatLng = $this->oDriver->lookup($sAddress);
 
-            if (!($oLatLng instanceof \Nails\GeoCode\Result\LatLng)) {
+            if (!($oLatLng instanceof LatLng)) {
                 throw new GeoCodeException(sprintf(
                     'Geo Code Driver did not return a %s result',
-                    \Nails\GeoCode\Result\LatLng::class
+                    LatLng::class
                 ));
             }
 
@@ -163,7 +167,8 @@ class GeoCode
      */
     public function address(string $sAddress): ?string
     {
-        return $this->lookup($sAddress)->getAddress();
+        $oResult = $this->lookup($sAddress);
+        return $oResult ? $oResult->getAddress() : null;
     }
 
     // --------------------------------------------------------------------------
@@ -177,7 +182,8 @@ class GeoCode
      */
     public function latLng(string $sAddress = ''): ?\stdClass
     {
-        return $this->lookup($sAddress)->getLatLng();
+        $oResult = $this->lookup($sAddress);
+        return $oResult ? $oResult->getLatLng() : null;
     }
 
     // --------------------------------------------------------------------------
@@ -191,7 +197,8 @@ class GeoCode
      */
     public function lat(string $sAddress = ''): ?string
     {
-        return $this->lookup($sAddress)->getLat();
+        $oResult = $this->lookup($sAddress);
+        return $oResult ? $oResult->getLat() : null;
     }
 
     // --------------------------------------------------------------------------
@@ -205,6 +212,7 @@ class GeoCode
      */
     public function lng(string $sAddress = ''): ?string
     {
-        return $this->lookup($sAddress)->getLng();
+        $oResult = $this->lookup($sAddress);
+        return $oResult ? $oResult->getLng() : null;
     }
 }
