@@ -84,7 +84,7 @@ class GeoCode
         }
 
         /** @var Interfaces\Driver $oInstance */
-        $oInstance = Components::getDriverInstance($oDriver);
+        $oInstance     = Components::getDriverInstance($oDriver);
         $this->oDriver = $oInstance;
     }
 
@@ -114,7 +114,11 @@ class GeoCode
 
         /** @var \Nails\Common\Service\Database $oDb */
         $oDb = Factory::service('Database');
-        $oDb->select('X(latlng) lat, Y(latlng) lng');
+        if ($oDb->isMySQL80()) {
+            $oDb->select('ST_X(latlng) lat, ST_Y(latlng) lng');
+        } else {
+            $oDb->select('X(latlng) lat, Y(latlng) lng');
+        }
         $oDb->where('address', $sAddress);
         $oDb->limit(1);
         $oResult = $oDb->get(self::DB_CACHE_TABLE)->row();
