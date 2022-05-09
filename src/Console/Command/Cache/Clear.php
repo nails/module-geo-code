@@ -11,6 +11,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Clear extends Base
 {
+    /**
+     * Configures the command
+     *
+     * @return void
+     */
     protected function configure()
     {
         $this
@@ -21,6 +26,15 @@ class Clear extends Base
 
     // --------------------------------------------------------------------------
 
+    /**
+     * Executes the command
+     *
+     * @param \Symfony\Component\Console\Input\InputInterface   $oInput
+     * @param \Symfony\Component\Console\Output\OutputInterface $oOutput
+     *
+     * @return int
+     * @throws \Nails\Common\Exception\FactoryException
+     */
     protected function execute(InputInterface $oInput, OutputInterface $oOutput)
     {
         parent::execute($oInput, $oOutput);
