@@ -38,7 +38,7 @@ class Clear extends Base
     protected function execute(InputInterface $oInput, OutputInterface $oOutput)
     {
         parent::execute($oInput, $oOutput);
-        $this->banner('Geo-IP: Clear Cache');
+        $this->banner('Geo-code: Clear Cache');
 
         /** @var \Nails\GeoCode\Service\GeoCode $oService */
         $oService = Factory::service('GeoCode', Constants::MODULE_SLUG);
