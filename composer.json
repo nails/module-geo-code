@@ -26,8 +26,8 @@
     "require-dev": {
         "phpunit/phpunit": "9.*",
         "phpstan/phpstan": "1.*",
-        "module-console": "dev-develop",
-        "module-cron": "dev-develop"
+        "nails/module-console": "dev-develop",
+        "nails/module-cron": "dev-develop"
     },
     "scripts": {
         "test": "./vendor/bin/phpunit",
