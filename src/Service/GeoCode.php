@@ -43,6 +43,13 @@ class GeoCode
     // --------------------------------------------------------------------------
 
     /**
+     * How long a cached item is valid for, MySQL DATE_SUB interval
+     */
+    const CACHE_PERIOD = '6 MONTH';
+
+    // --------------------------------------------------------------------------
+
+    /**
      * The default driver to use if none is specified
      */
     const DEFAULT_DRIVER = 'nails/driver-geo-code-google';
@@ -120,6 +127,7 @@ class GeoCode
             $oDb->select('X(latlng) lat, Y(latlng) lng');
         }
         $oDb->where('address', $sAddress);
+        $oDb->where('created >', 'DATE_SUB(NOW(), INTERVAL ' . static::CACHE_PERIOD . ')', false);
         $oDb->limit(1);
         $oResult = $oDb->get(self::DB_CACHE_TABLE)->row();
 
