@@ -50,7 +50,7 @@ class Clear extends Base
             $bForce = $oInput->getOption('force');
 
             if (!$bForce) {
-                $oDb->where('created >', 'DATE_SUB(NOW(), INTERVAL ' . $oService::CACHE_PERIOD . ')', false);
+                $oDb->where('created <', 'DATE_SUB(NOW(), INTERVAL ' . $oService::CACHE_PERIOD . ')', false);
             }
             $iTotal = $oDb->count_all_results($oService::DB_CACHE_TABLE);
             $oOutput->write(sprintf(
@@ -59,7 +59,7 @@ class Clear extends Base
             ));
 
             if (!$bForce) {
-                $oDb->where('created >', 'DATE_SUB(NOW(), INTERVAL ' . $oService::CACHE_PERIOD . ')', false);
+                $oDb->where('created <', 'DATE_SUB(NOW(), INTERVAL ' . $oService::CACHE_PERIOD . ')', false);
                 $oDb->delete($oService::DB_CACHE_TABLE);
             } else {
                 $oDb->truncate($oService::DB_CACHE_TABLE);
