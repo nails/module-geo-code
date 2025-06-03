@@ -1,6 +1,12 @@
 {
     "name": "nails/module-geo-code",
-    "keywords": ["Nails", "Shed Collective", "CodeIgniter", "GEO-Code Module"],
+    "keywords":
+    [
+        "Nails",
+        "Shed Collective",
+        "CodeIgniter",
+        "GEO-Code Module"
+    ],
     "homepage": "http://nailsapp.co.uk/modules/geo-code",
     "description": "This is the \"GeoCode\" module for Nails.",
     "license": "MIT",
@@ -21,28 +27,34 @@
     "prefer-stable": true,
     "require":
     {
-        "nails/common": "dev-feature/pre-new-admin-ci-php8"
+        "nails/common": "dev-feature/pre-new-admin"
     },
-    "require-dev": {
+    "require-dev":
+    {
         "phpunit/phpunit": "9.*",
         "phpstan/phpstan": "1.*",
-        "nails/module-console": "dev-feature/pre-new-admin-ci-php8",
-        "nails/module-cron": "dev-feature/pre-new-admin-ci-php8"
+        "nails/module-console": "dev-feature/pre-new-admin",
+        "nails/module-cron": "dev-feature/pre-new-admin"
     },
-    "scripts": {
+    "scripts":
+    {
         "test": "./vendor/bin/phpunit",
         "analyse": "./vendor/bin/phpstan analyse -c .phpstan/config.neon"
     },
     "autoload":
     {
-        "psr-4": {"Nails\\GeoCode\\": "src/"}
+        "psr-4":
+        {
+            "Nails\\GeoCode\\": "src/"
+        }
     },
-    "suggest": {
+    "suggest":
+    {
         "nails/driver-geocode-google": "Adds support for geocoding using the Google Geocoding API."
     },
     "extra":
     {
-        "nails" :
+        "nails":
         {
             "moduleName": "geocode",
             "type": "module",
