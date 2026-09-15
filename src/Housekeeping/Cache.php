@@ -17,38 +17,6 @@ class Cache extends Base
 
     public function execute(Context $oContext): Result
     {
-        return $this->purgeExpired($oContext);
-    }
-
-    public function truncate(Context $oContext): Result
-    {
-        /** @var Database $oDb */
-        $oDb    = Factory::service('Database');
-        $sTable = GeoCode::DB_CACHE_TABLE;
-        $iCount = (int) $oDb->count_all_results($sTable);
-
-        $oContext
-            ->writeln(sprintf(
-                'Truncating <comment>%s</comment> (<comment>%s</comment> rows)',
-                $sTable,
-                number_format($iCount)
-            ))
-            ->log(sprintf(
-                'TRUNCATE %s rows=%d dry_run=%s',
-                $sTable,
-                $iCount,
-                $oContext->isDryRun() ? 'true' : 'false'
-            ));
-
-        if (!$oContext->isDryRun()) {
-            $oDb->truncate($sTable);
-        }
-
-        return Result::ok($iCount);
-    }
-
-    protected function purgeExpired(Context $oContext): Result
-    {
         /** @var Database $oDb */
         $oDb        = Factory::service('Database');
         $sTable     = GeoCode::DB_CACHE_TABLE;
