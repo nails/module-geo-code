@@ -12,7 +12,7 @@ use Nails\Housekeeping\Routine\Result;
 class Cache extends Base
 {
     const LABEL           = 'Geo-code cache';
-    const DESCRIPTION     = 'Deletes Geo-code cache rows older than CACHE_PERIOD';
+    const DESCRIPTION     = 'Deletes Geo-code cache rows older than GEO_CODE_CACHE_PERIOD';
     const CRON_EXPRESSION = '@hourly';
 
     public function execute(Context $oContext): Result
@@ -20,28 +20,30 @@ class Cache extends Base
         /** @var Database $oDb */
         $oDb        = Factory::service('Database');
         $sTable     = GeoCode::DB_CACHE_TABLE;
-        $sPeriod    = GeoCode::CACHE_PERIOD;
+        $iPeriod    = GeoCode::cachePeriodSeconds();
+        $sCutOff    = GeoCode::cacheCutOff();
         $iBatchSize = 200;
         $iProcessed = 0;
         $iLastId    = 0;
 
         $oContext
             ->writeln(sprintf(
-                'Deleting from <comment>%s</comment> older than <comment>%s</comment>',
+                'Deleting from <comment>%s</comment> older than <comment>%d</comment> seconds',
                 $sTable,
-                $sPeriod
+                $iPeriod
             ))
             ->log(sprintf(
-                'TABLE %s period=%s batch_size=%d dry_run=%s',
+                'TABLE %s period_seconds=%d cut_off=%s batch_size=%d dry_run=%s',
                 $sTable,
-                $sPeriod,
+                $iPeriod,
+                $sCutOff,
                 $iBatchSize,
                 $oContext->isDryRun() ? 'true' : 'false'
             ));
 
         while (true) {
             $oDb->select('id, address, created');
-            $oDb->where('created <', 'DATE_SUB(NOW(), INTERVAL ' . $sPeriod . ')', false);
+            $oDb->where('created <', $sCutOff);
             $oDb->where('id >', $iLastId);
             $oDb->order_by('id', 'asc');
             $oDb->limit($iBatchSize);
