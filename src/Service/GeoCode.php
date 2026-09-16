@@ -16,7 +16,6 @@ use Nails\Config;
 use Nails\Factory;
 use Nails\GeoCode\Constants;
 use Nails\GeoCode\Interfaces;
-use Nails\GeoCode\Exception\GeoCodeException;
 use Nails\GeoCode\Exception\GeoCodeDriverException;
 use Nails\GeoCode\Result\LatLng;
 
@@ -72,7 +71,7 @@ class GeoCode
     /**
      * Construct the Library, test that the driver is valid
      *
-     * @throws GeoCodeException
+     * @throws GeoCodeDriverException
      */
     public function __construct()
     {
@@ -103,8 +102,15 @@ class GeoCode
             ));
         }
 
-        /** @var Interfaces\Driver $oInstance */
-        $oInstance     = Components::getDriverInstance($oDriver);
+        $oInstance = Components::getDriverInstance($oDriver);
+        if (!$oInstance instanceof Interfaces\Driver) {
+            throw new GeoCodeDriverException(sprintf(
+                '"%s" must implement %s',
+                get_class($oInstance),
+                Interfaces\Driver::class
+            ));
+        }
+
         $this->oDriver = $oInstance;
     }
 
@@ -156,13 +162,6 @@ class GeoCode
         } else {
 
             $oLatLng = $this->oDriver->lookup($sAddress);
-
-            if (!($oLatLng instanceof LatLng)) {
-                throw new GeoCodeException(sprintf(
-                    'Geo Code Driver did not return a %s result',
-                    LatLng::class
-                ));
-            }
 
             $sLat = $oLatLng->getLat();
             $sLng = $oLatLng->getLng();
