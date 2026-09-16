@@ -12,10 +12,10 @@
 namespace Nails\GeoCode\Service;
 
 use Nails\Components;
+use Nails\Config;
 use Nails\Factory;
 use Nails\GeoCode\Constants;
 use Nails\GeoCode\Interfaces;
-use Nails\GeoCode\Exception\GeoCodeException;
 use Nails\GeoCode\Exception\GeoCodeDriverException;
 use Nails\GeoCode\Result\LatLng;
 
@@ -43,7 +43,19 @@ class GeoCode
     // --------------------------------------------------------------------------
 
     /**
+     * Default cache period in seconds when GEO_CODE_CACHE_PERIOD is unset
+     */
+    const DEFAULT_CACHE_PERIOD_SECONDS = 15552000;
+
+    /**
+     * Config key for the cache period, in seconds
+     */
+    const CONFIG_CACHE_PERIOD = 'GEO_CODE_CACHE_PERIOD';
+
+    /**
      * How long a cached item is valid for, MySQL DATE_SUB interval
+     *
+     * @deprecated Use cachePeriodSeconds() / GEO_CODE_CACHE_PERIOD instead
      */
     const CACHE_PERIOD = '6 MONTH';
 
@@ -59,7 +71,7 @@ class GeoCode
     /**
      * Construct the Library, test that the driver is valid
      *
-     * @throws GeoCodeException
+     * @throws GeoCodeDriverException
      */
     public function __construct()
     {
@@ -90,8 +102,15 @@ class GeoCode
             ));
         }
 
-        /** @var Interfaces\Driver $oInstance */
-        $oInstance     = Components::getDriverInstance($oDriver);
+        $oInstance = Components::getDriverInstance($oDriver);
+        if (!$oInstance instanceof Interfaces\Driver) {
+            throw new GeoCodeDriverException(sprintf(
+                '"%s" must implement %s',
+                get_class($oInstance),
+                Interfaces\Driver::class
+            ));
+        }
+
         $this->oDriver = $oInstance;
     }
 
@@ -127,7 +146,7 @@ class GeoCode
             $oDb->select('X(latlng) lat, Y(latlng) lng');
         }
         $oDb->where('address', $sAddress);
-        $oDb->where('created >', 'DATE_SUB(NOW(), INTERVAL ' . static::CACHE_PERIOD . ')', false);
+        $oDb->where('created >', static::cacheCutOff());
         $oDb->limit(1);
         $oResult = $oDb->get(self::DB_CACHE_TABLE)->row();
 
@@ -144,13 +163,6 @@ class GeoCode
 
             $oLatLng = $this->oDriver->lookup($sAddress);
 
-            if (!($oLatLng instanceof LatLng)) {
-                throw new GeoCodeException(sprintf(
-                    'Geo Code Driver did not return a %s result',
-                    LatLng::class
-                ));
-            }
-
             $sLat = $oLatLng->getLat();
             $sLng = $oLatLng->getLng();
 
@@ -166,6 +178,32 @@ class GeoCode
         $this->setCache($sAddress, $oLatLng);
 
         return $oLatLng;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * How long a cached item is valid for, in seconds
+     */
+    public static function cachePeriodSeconds(): int
+    {
+        $iSeconds = (int) Config::get(static::CONFIG_CACHE_PERIOD, static::DEFAULT_CACHE_PERIOD_SECONDS);
+
+        return $iSeconds > 0
+            ? $iSeconds
+            : static::DEFAULT_CACHE_PERIOD_SECONDS;
+    }
+
+    /**
+     * Timestamp before which a cached row is considered stale
+     */
+    public static function cacheCutOff(): string
+    {
+        /** @var \DateTime $oCutOff */
+        $oCutOff = Factory::factory('DateTime');
+        $oCutOff->sub(new \DateInterval('PT' . static::cachePeriodSeconds() . 'S'));
+
+        return $oCutOff->format('Y-m-d H:i:s');
     }
 
     // --------------------------------------------------------------------------
