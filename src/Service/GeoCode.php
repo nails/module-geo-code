@@ -12,6 +12,7 @@
 namespace Nails\GeoCode\Service;
 
 use Nails\Components;
+use Nails\Config;
 use Nails\Factory;
 use Nails\GeoCode\Constants;
 use Nails\GeoCode\Interfaces;
@@ -43,7 +44,19 @@ class GeoCode
     // --------------------------------------------------------------------------
 
     /**
+     * How long a cached item is valid for, in seconds
+     */
+    const CACHE_PERIOD_SECONDS = 15552000;
+
+    /**
+     * Config key for the cache period, in seconds
+     */
+    const CONFIG_CACHE_PERIOD = 'GEO_CODE_CACHE_PERIOD';
+
+    /**
      * How long a cached item is valid for, MySQL DATE_SUB interval
+     *
+     * @deprecated Use cachePeriodSeconds() / GEO_CODE_CACHE_PERIOD instead
      */
     const CACHE_PERIOD = '6 MONTH';
 
@@ -127,7 +140,7 @@ class GeoCode
             $oDb->select('X(latlng) lat, Y(latlng) lng');
         }
         $oDb->where('address', $sAddress);
-        $oDb->where('created >', 'DATE_SUB(NOW(), INTERVAL ' . static::CACHE_PERIOD . ')', false);
+        $oDb->where('created >', static::cacheCutOff());
         $oDb->limit(1);
         $oResult = $oDb->get(self::DB_CACHE_TABLE)->row();
 
@@ -166,6 +179,32 @@ class GeoCode
         $this->setCache($sAddress, $oLatLng);
 
         return $oLatLng;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * How long a cached item is valid for, in seconds
+     */
+    public static function cachePeriodSeconds(): int
+    {
+        $iSeconds = (int) Config::get(static::CONFIG_CACHE_PERIOD, static::CACHE_PERIOD_SECONDS);
+
+        return $iSeconds > 0
+            ? $iSeconds
+            : static::CACHE_PERIOD_SECONDS;
+    }
+
+    /**
+     * Timestamp before which a cached row is considered stale
+     */
+    public static function cacheCutOff(): string
+    {
+        /** @var \DateTime $oCutOff */
+        $oCutOff = Factory::factory('DateTime');
+        $oCutOff->sub(new \DateInterval('PT' . static::cachePeriodSeconds() . 'S'));
+
+        return $oCutOff->format('Y-m-d H:i:s');
     }
 
     // --------------------------------------------------------------------------
