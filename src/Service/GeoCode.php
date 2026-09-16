@@ -43,9 +43,9 @@ class GeoCode
     // --------------------------------------------------------------------------
 
     /**
-     * How long a cached item is valid for, in seconds
+     * Default cache period in seconds when GEO_CODE_CACHE_PERIOD is unset
      */
-    const CACHE_PERIOD_SECONDS = 15552000;
+    const DEFAULT_CACHE_PERIOD_SECONDS = 15552000;
 
     /**
      * Config key for the cache period, in seconds
@@ -187,11 +187,11 @@ class GeoCode
      */
     public static function cachePeriodSeconds(): int
     {
-        $iSeconds = (int) Config::get(static::CONFIG_CACHE_PERIOD, static::CACHE_PERIOD_SECONDS);
+        $iSeconds = (int) Config::get(static::CONFIG_CACHE_PERIOD, static::DEFAULT_CACHE_PERIOD_SECONDS);
 
         return $iSeconds > 0
             ? $iSeconds
-            : static::CACHE_PERIOD_SECONDS;
+            : static::DEFAULT_CACHE_PERIOD_SECONDS;
     }
 
     /**
