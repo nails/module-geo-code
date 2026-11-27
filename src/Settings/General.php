@@ -2,6 +2,7 @@
 
 namespace Nails\GeoCode\Settings;
 
+use Nails\GeoCode\Admin\Permission;
 use Nails\GeoCode\Service\Driver;
 use Nails\Common\Helper\Form;
 use Nails\Common\Interfaces;
@@ -30,9 +31,9 @@ class General implements Interfaces\Component\Settings
     /**
      * @inheritDoc
      */
-    public function getPermissions(): array
+    public function getPermission(): string
     {
-        return [];
+        return Permission\Settings\General::class;
     }
 
     // --------------------------------------------------------------------------
